@@ -1,25 +1,34 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Axios from 'axios';
+import Menu from './Menu';
+import Detail from './Detail';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      list: [],
+      detail:[]
+    }
+  }
+
+  componentDidMount() {
+    Axios.get("https://stream-restaurant-menu-svc.herokuapp.com/category")
+      .then((res) => { this.setState({ list: res.data }) })
+  }
+
+  getDetail = (name) => {
+    Axios.get(`https://stream-restaurant-menu-svc.herokuapp.com/item?category=${name}`)
+      .then((res) => { this.setState({ detail:res.data }) })
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Menu list={this.state.list} getDetail={this.getDetail}/>
+        <Detail detail={this.state.detail}/>
       </div>
     );
   }
